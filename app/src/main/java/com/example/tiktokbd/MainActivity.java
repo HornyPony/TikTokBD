@@ -9,6 +9,7 @@ import androidx.room.Room;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TikAppDatabase tikToksAppDatabase;
     private ArrayList<Video> videos = new ArrayList<>();
     private RecyclerView recyclerView;
+    private Button addPhotoButton;
     private Spinner topicSpinner;
     private ArrayList spinnerArrayList;
     private ArrayAdapter spinnerAdapter;
@@ -83,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
         final EditText whoRecommendedEditText = view.findViewById(R.id.whoRecommendedEditText);
         final EditText urlEditText = view.findViewById(R.id.urlEditText);
         final Button addPhotoButton = view.findViewById(R.id.addPhotoButton);
+
+        addPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NewMemoryActivity.class);
+                startActivity(intent);
+            }
+        });
 //        tv = findViewById(R.id.topicTextView);
 //        topicSpinner = view.findViewById(R.id.topicSpinner);
 /*
@@ -220,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+
     }
 
     private void deleteVideo(Video video, int position) {
