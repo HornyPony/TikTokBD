@@ -1,5 +1,6 @@
 package com.example.tiktokbd;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -10,6 +11,7 @@ import androidx.room.Room;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -20,6 +22,7 @@ import android.widget.ArrayAdapter;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -35,13 +38,16 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private VideosAdapter videosAdapter;
-    TikAppDatabase tikToksAppDatabase;
+    private TikAppDatabase tikToksAppDatabase;
     private ArrayList<Video> videos = new ArrayList<>();
     private RecyclerView recyclerView;
     private Button addPhotoButton;
     private Spinner topicSpinner;
     private ArrayList spinnerArrayList;
     private ArrayAdapter spinnerAdapter;
+    private String image;
+
+    private static final int PICK_PHOTO_REQUEST_CODE = 111;
     String topic;
 
     @Override
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void addAndEditVideos(final boolean isUpdate, final Video video, final int position) {
         LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getApplicationContext());
         View view = layoutInflaterAndroid.inflate(R.layout.add_video, null);
@@ -90,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NewMemoryActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, PICK_PHOTO_REQUEST_CODE);
             }
         });
+
+
 //        tv = findViewById(R.id.topicTextView);
 //        topicSpinner = view.findViewById(R.id.topicSpinner);
 /*
@@ -222,11 +231,11 @@ public class MainActivity extends AppCompatActivity {
                         if (isUpdate && v != null) {
 
                             updateVideo(descriptionEditText.getText().toString(), whoRecommendedEditText.getText().toString(),
-                                    urlEditText.getText().toString(), position);
+                                    urlEditText.getText().toString(), position, image);
                         } else {
 
                             createVideo(descriptionEditText.getText().toString(), whoRecommendedEditText.getText().toString(),
-                                    urlEditText.getText().toString());
+                                    urlEditText.getText().toString(), image);
                         }
                     }
                 });
@@ -241,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         videosAdapter.notifyDataSetChanged();
     }
 
-    private void updateVideo(String description, String whoRecommended, String url, int position) {
+    private void updateVideo(String description, String whoRecommended, String url, int position, String image) {
 
         Video video = videos.get(position);
 
@@ -259,9 +268,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void createVideo(String description, String whoRecommended, String url) {
+    private void createVideo(String description, String whoRecommended, String url, String image) {
 
-        long id = tikToksAppDatabase.getTikTokDAO().addTikTok(new Video(0, description, whoRecommended, url));
+        long id = tikToksAppDatabase.getTikTokDAO().addTikTok(new Video(0, description, whoRecommended, url, image));
 
 
         Video video = tikToksAppDatabase.getTikTokDAO().getVideo(id);
@@ -273,7 +282,18 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_PHOTO_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                image = data.getStringExtra("image");
+            } else {
+                Toast.makeText(MainActivity.this, "Photo has not taken", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

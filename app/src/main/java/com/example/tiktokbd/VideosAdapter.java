@@ -60,6 +60,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.MyViewHold
 //        holder.dateTextView.setText(video.getDate());
         holder.whoRecommendedTextView.setText(video.getWhoRecommended());
         holder.URLTextView.setText(video.getURL());
+        holder.tikTokImageView.setImageBitmap(video.getImageAsBitmap());
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
